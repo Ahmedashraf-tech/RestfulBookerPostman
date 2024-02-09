@@ -1,0 +1,1093 @@
+{
+	"info": {
+		"_postman_id": "6772c638-6264-4494-b5a1-5b86b46ac2b3",
+		"name": "E2E",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12251472",
+		"_collection_link": "https://dark-sunset-97621.postman.co/workspace/Full-Project~6610faa2-ce5b-4116-8f50-19d0447e5a71/collection/12251472-6772c638-6264-4494-b5a1-5b86b46ac2b3?action=share&source=collection_link&creator=12251472"
+	},
+	"item": [
+		{
+			"name": "Token",
+			"item": [
+				{
+					"name": "CreateToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code should be 200 OK\", function () {\r",
+									"pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"var Token = pm.response.json().token;\r",
+									"pm.collectionVariables.set(\"AccessToken\", Token);\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\" : \"{{Username}}\",\r\n    \"password\" : \"{{Password}}\"\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/auth",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Booking",
+			"item": [
+				{
+					"name": "CreateBooking",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"// Random FirstName\r",
+									"pm.collectionVariables.set(\"Requestfirstname\", pm.variables.replaceIn(\"{{$randomFirstName}}\"));\r",
+									"\r",
+									"// Random LastName\r",
+									"pm.collectionVariables.set(\"Requestlastname\", pm.variables.replaceIn(\"{{$randomLastName}}\"));\r",
+									"\r",
+									"\r",
+									"// Random Price within 100 to 150 \r",
+									"\r",
+									"function generateRandomNumber() {\r",
+									" const min = 100;\r",
+									" const max = 150;\r",
+									" return Math.floor(Math.random() * (max - min + 1)) + min;\r",
+									"}\r",
+									"\r",
+									"pm.collectionVariables.set(\"Requesttotalprice\", generateRandomNumber())\r",
+									"\r",
+									"\r",
+									"// Random Boolean\r",
+									"\r",
+									"function getRandomBoolean() {\r",
+									"    return Math.random() >= 0.5;\r",
+									"}\r",
+									"\r",
+									"var randomBoolean = getRandomBoolean();\r",
+									"pm.collectionVariables.set(\"randomBoolean\", randomBoolean);\r",
+									"console.log(randomBoolean); // Outputs: true or false\r",
+									"\r",
+									"// Random between Dinner , Launch , Breakfast\r",
+									"\r",
+									"function getRandomOption() {\r",
+									"    var options = [\"Breakfast\", \"Dinner\", \"Launch\"];\r",
+									"    var index = Math.floor(Math.random() * options.length);\r",
+									"    return options[index];\r",
+									"}\r",
+									"\r",
+									"var RandomOption = getRandomOption();\r",
+									"pm.collectionVariables.set(\"RandomOption\", RandomOption);\r",
+									"console.log(RandomOption); // Outputs: true or false\r",
+									"\r",
+									"\r",
+									"// Dates\r",
+									"\r",
+									"function generateRandomDates() {\r",
+									"  const minDate = new Date(1990, 0, 1);\r",
+									"  const maxDate = new Date(1999, 11, 31);\r",
+									"\r",
+									"  const daysBetween = Math.floor(Math.random() * (maxDate.getTime() - minDate.getTime()) + minDate.getTime());\r",
+									"  const checkInDate = new Date(daysBetween);\r",
+									"\r",
+									"// Generate Random Date \r",
+									"\r",
+									"  const minCheckoutTime = checkInDate.getTime();\r",
+									"  const maxCheckoutTime = maxDate.getTime();\r",
+									"  const checkoutDaysBetween = Math.floor(Math.random() * (maxCheckoutTime - minCheckoutTime) + minCheckoutTime);\r",
+									"  const checkOutDate = new Date(checkoutDaysBetween);\r",
+									"\r",
+									"  \r",
+									"  \r",
+									"// Change the format to a string \r",
+									"  return {\r",
+									"    checkInDate: checkInDate.toISOString().slice(0, 10),\r",
+									"    checkOutDate: checkOutDate.toISOString().slice(0, 10)\r",
+									"  };\r",
+									"}\r",
+									"\r",
+									"// Store the value in a collection vvariable \r",
+									"const randomDates = generateRandomDates();\r",
+									"pm.collectionVariables.set(\"Requestcheckin\", randomDates.checkInDate);\r",
+									"pm.collectionVariables.set(\"Requestcheckout\", randomDates.checkOutDate);\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code should be 200 OK\", function () {\r",
+									"pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// FirstName\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"FirstName Returned Correctly\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking).to.have.property('firstname');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"FirstName Not Null\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.firstname).to.not.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"FirstName Not undefined\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.firstname).to.not.be.undefined;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"FirstName - Correct DataType\", function () {\r",
+									"pm.expect(typeof JSON.parse(responseBody).booking.firstname).to.equal('string');\r",
+									"});\r",
+									"\r",
+									"// FirstName - Value As Expected\r",
+									"\r",
+									"var requestFirstname = JSON.parse(request.data).firstname;\r",
+									"pm.collectionVariables.set(\"Requestfirstname\", requestFirstname);\r",
+									"\r",
+									"var responseFirstName = pm.response.json().booking.firstname;\r",
+									"\r",
+									"pm.test(\"Verify that firstname return the correct value\", function(){\r",
+									"pm.expect(responseFirstName).to.be.equal(requestFirstname);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// LastName\r",
+									"\r",
+									"\r",
+									"pm.test(\"LastName Returned Correctly\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking).to.have.property('lastname');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"LastName Not Null\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.lastname).to.not.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"LastName Not undefined\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.lastname).to.not.be.undefined;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"LastName - Correct DataType\", function () {\r",
+									"pm.expect(typeof JSON.parse(responseBody).booking.lastname).to.equal('string');\r",
+									"});\r",
+									"\r",
+									"// lastName - Value As Expected\r",
+									"\r",
+									"var requestLastname = JSON.parse(request.data).lastname;\r",
+									"pm.collectionVariables.set(\"Requestlastname\", requestLastname);\r",
+									"\r",
+									"var responseLastName = pm.response.json().booking.lastname;\r",
+									"\r",
+									"pm.test(\"Verify that lastname return the correct value\", function(){\r",
+									"    pm.expect(responseLastName).to.be.equal(requestLastname);\r",
+									"});\r",
+									"\r",
+									"// Total Price\r",
+									"\r",
+									"pm.test(\"Total Price Returned Correctly\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking).to.have.property('totalprice');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Total Price Not Null\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.totalprice).to.not.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Total Price Not undefined\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.totalprice).to.not.be.undefined;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Total Price - Correct DataType\", function () {\r",
+									"pm.expect(typeof JSON.parse(responseBody).booking.totalprice).to.be.equal('number');\r",
+									"});\r",
+									"\r",
+									"// Totalprice - Value As Expected\r",
+									"\r",
+									"var requesttotalprice = JSON.parse(request.data).totalprice;\r",
+									"pm.collectionVariables.set(\"Requesttotalprice\", requesttotalprice);\r",
+									"\r",
+									"var responsetotalprice = JSON.parse(responseBody).booking.totalprice\r",
+									"    responsetotalprice = Number(responsetotalprice);\r",
+									"pm.test(\"Verify that totalprice return the correct value\", function(){\r",
+									"pm.expect(responsetotalprice).to.be.equal(requesttotalprice);\r",
+									"});\r",
+									"\r",
+									"// Deposit ID\r",
+									"\r",
+									"pm.test(\"Deposit ID Returned Correctly\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking).to.have.property('depositpaid');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Deposit ID Not Null\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.depositpaid).to.not.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Deposit ID Not undefined\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.depositpaid).to.not.be.undefined;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Deposit ID - Correct DataType\", function () {\r",
+									"pm.expect(typeof JSON.parse(responseBody).booking.depositpaid).to.equal('boolean');\r",
+									"});\r",
+									"\r",
+									"// Deposit ID - Value As Expected\r",
+									"\r",
+									"var requestdepositpaid = JSON.parse(request.data).depositpaid;\r",
+									"pm.collectionVariables.set(\"Requestdepositpaid\", requestdepositpaid);\r",
+									"\r",
+									"var responsedepositpaid = pm.response.json().booking.depositpaid;\r",
+									"\r",
+									"pm.test(\"Verify that Deposit ID return the correct value\", function(){\r",
+									"pm.expect(responsedepositpaid).to.be.equal(requestdepositpaid);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// Dates\r",
+									"\r",
+									"pm.test(\"Bookingdates Property Returned Correctly\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking).to.have.property('bookingdates');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"CheckIn Property Returned Correctly\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.bookingdates).to.have.property('checkin');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"CheckIn Property Returned Correctly\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.bookingdates).to.have.property('checkout');\r",
+									"});\r",
+									"\r",
+									"// \r",
+									"\r",
+									"pm.test(\"CheckIn Not Null\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.checkin).to.not.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"CheckIn Not undefined\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.bookingdates.checkin).to.not.be.undefined;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"CheckIn - Correct DataType\", function () {\r",
+									"pm.expect(typeof JSON.parse(responseBody).booking.bookingdates.checkin).to.equal('string');\r",
+									"});\r",
+									"\r",
+									"// CheckIn - Value As Expected\r",
+									"\r",
+									"var requestFirstname = JSON.parse(request.data).checkin;\r",
+									"pm.collectionVariables.set(\"Requestcheckin\", requestcheckin);\r",
+									"\r",
+									"var responsecheckin = JSON.parse(responseBody).booking.checkin;\r",
+									"\r",
+									"pm.test(\"Verify that CheckIn return the correct value\", function(){\r",
+									"pm.expect(responsecheckin).to.be.equal(requestcheckin);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"CheckIn Property Returned Correctly\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.bookingdates).to.have.property('checkin');\r",
+									"});\r",
+									"\r",
+									"// \r",
+									"\r",
+									"pm.test(\"CheckIn Not Null\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.bookingdates.checkin).to.not.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"checkin Not undefined\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.bookingdates.checkin).to.not.be.undefined;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"checkin - Correct DataType\", function () {\r",
+									"pm.expect(typeof JSON.parse(responseBody).booking.bookingdates.checkin).to.be.equal('string');\r",
+									"});\r",
+									"\r",
+									"// Check In - Value As Expected\r",
+									"\r",
+									"var requestcheckin = JSON.parse(request.data).bookingdates.checkin;\r",
+									"pm.collectionVariables.set(\"Requestcheckin\", requestcheckin);\r",
+									"\r",
+									"var responsecheckin = pm.response.json().booking.bookingdates.checkin;\r",
+									"\r",
+									"pm.test(\"Verify that CheckIn return the correct value\", function(){\r",
+									"pm.expect(responsecheckin).to.be.equal(requestcheckin);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// Check Out\r",
+									"\r",
+									"pm.test(\"checkout Property Returned Correctly\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.bookingdates).to.have.property('checkout');\r",
+									"});\r",
+									"\r",
+									"// \r",
+									"\r",
+									"pm.test(\"checkout Not Null\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.bookingdates.checkout).to.not.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"checkout Not undefined\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.bookingdates.checkout).to.not.be.undefined;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"checkout - Correct DataType\", function () {\r",
+									"pm.expect(typeof JSON.parse(responseBody).booking.bookingdates.checkout).to.be.equal('string');\r",
+									"});\r",
+									"\r",
+									"// CheckOut - Value As Expected\r",
+									"\r",
+									"var requestcheckout = JSON.parse(request.data).checkout;\r",
+									"pm.collectionVariables.set(\"Requestcheckout\", requestcheckout);\r",
+									"\r",
+									"var responsecheckout = pm.response.json().booking.checkout;\r",
+									"\r",
+									"pm.test(\"Verify that checkout return the correct value\", function(){\r",
+									"pm.expect(responsecheckout).to.be.equal(requestcheckout);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"// Additional Needs\r",
+									"\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Additional Needs Returned Correctly\", function () {\r",
+									"pm.expect(jsonData.booking).to.have.property('additionalneeds');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Additional Needs Not Null\", function () {\r",
+									"pm.expect(jsonData.booking.additionalneeds).to.not.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Additional Needs Not undefined\", function () {\r",
+									"pm.expect(JSON.parse(responseBody).booking.additionalneeds).to.not.be.undefined;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Additional Needs - Correct DataType\", function () {\r",
+									"pm.expect(typeof JSON.parse(responseBody).booking.additionalneeds).to.be.equal('string');\r",
+									"});\r",
+									"\r",
+									"// AdditionalNeeds - Value As Expected\r",
+									"\r",
+									"var requestAdditionalNeeds = JSON.parse(request.data).additionalneeds;\r",
+									"pm.collectionVariables.set(\"RequestAdditionalNeeds\", requestAdditionalNeeds);\r",
+									"\r",
+									"var responseAdditionalNeeds = pm.response.json().booking.additionalneeds;\r",
+									"\r",
+									"pm.test(\"Verify that AdditionalNeeds return the correct value\", function(){\r",
+									"pm.expect(responseAdditionalNeeds).to.be.equal(requestAdditionalNeeds);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"var Bookingid = pm.response.json().bookingid;\r",
+									"pm.collectionVariables.set(\"BookingID\", Bookingid);\r",
+									"\r",
+									"// Try to get the created booking \r",
+									"var bookingId = pm.collectionVariables.get(\"BookingID\");\r",
+									"var baseurl = pm.collectionVariables.get(\"BaseURL\");\r",
+									"const url = `${baseurl}/booking/${bookingId}`; \r",
+									"pm.sendRequest(url);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"{{Requestfirstname}}\",\r\n    \"lastname\" : \"{{Requestlastname}}\",\r\n    \"totalprice\" : {{Requesttotalprice}},\r\n    \"depositpaid\" : {{Requestdepositpaid}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{Requestcheckin}}\",\r\n        \"checkout\" : \"{{Requestcheckout}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{RequestAdditionalNeeds}}\"\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/booking",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"    pm.test(\" Check that the status code return 200 \", function () {",
+									"    pm.response.to.have.status(200);",
+									"    });",
+									"",
+									"    pm.test(\"Verify that firstname is exist\",function(){",
+									"    pm.collectionVariables.get(\"Requestfirstname\")",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"firstname\")",
+									"    });",
+									"",
+									"    pm.test(\"FirstName Not Null / Notdefined \",function(){",
+									"        pm.expect(JSON.parse(responseBody).firstname).to.not.be.equal(null);",
+									"        pm.expect(JSON.parse(responseBody).firstname).to.not.be.equal(undefined);",
+									"    });",
+									"",
+									"    pm.test(\"FirstName - Correct DataType\",function(){",
+									"        ",
+									"        pm.expect(typeof JSON.parse(responseBody).firstname).to.be.equal(\"string\") ",
+									"    });",
+									"    console.log(typeof JSON.parse(responseBody).firstname);",
+									"",
+									"    pm.test(\"Verify that firstname return the correct value \",function(){",
+									"    ",
+									"    pm.expect(pm.collectionVariables.get(\"Requestfirstname\")).to.be.equal(( JSON.parse(responseBody).firstname)) ;",
+									"",
+									"    });",
+									"",
+									"    pm.test(\"LastName Returned Correctly\",function(){",
+									"        pm.expect(JSON.parse(responseBody)).to.have.property(\"lastname\")",
+									"    });",
+									"",
+									"    pm.test(\"LastName Not Null/undefined \",function(){",
+									"        pm.expect(JSON.parse(responseBody).lastname).to.not.be.equal(null);",
+									"        pm.expect(JSON.parse(responseBody).lastname).to.not.be.equal(undefined);",
+									"    });",
+									"",
+									"    pm.test(\"LastName - Correct DataType\",function(){",
+									"        console.log(typeof JSON.parse(responseBody).lastname);",
+									"        pm.expect(typeof JSON.parse(responseBody).lastname).to.be.equal(\"string\") ;",
+									"    });",
+									"",
+									"    pm.test(\"Verify that lastname return the correct value\",function()",
+									"    {",
+									"        console.log(JSON.parse(responseBody).lastname);",
+									"    pm.expect(pm.collectionVariables.get(\"Requestlastname\")).to.be.equal(( JSON.parse(responseBody).lastname)) ;",
+									"    });",
+									"",
+									"",
+									"    pm.test(\"Total Price Returned Correctly\",function(){",
+									"        pm.expect(JSON.parse(responseBody)).to.have.property(\"totalprice\")",
+									"    });",
+									"",
+									"    pm.test(\"Total Price Not Null / undefined \",function(){",
+									"        pm.expect(JSON.parse(responseBody).totalprice).to.not.be.equal(null);",
+									"        pm.expect(JSON.parse(responseBody).totalprice).to.not.be.equal(undefined);",
+									"    });",
+									"",
+									"    pm.test(\"Total Price - Correct DataType\",function(){",
+									"        console.log(typeof JSON.parse(responseBody).totalprice);",
+									"        pm.expect(typeof JSON.parse(responseBody).totalprice).to.be.equal(\"number\") ;",
+									"    });",
+									"    ",
+									"    pm.test(\"Verify that totalprice return the correct value\",function()",
+									"    {",
+									"        console.log(JSON.parse(responseBody).totalprice);",
+									"        pm.expect( pm.collectionVariables.get(\"Requesttotalprice\")).to.be.equal(JSON.parse(responseBody).totalprice) ;",
+									"    });",
+									"",
+									"    pm.test(\"Deposit ID Returned Correctly\",function(){",
+									"        pm.expect(JSON.parse(responseBody)).to.have.property(\"depositpaid\")",
+									"    });",
+									"",
+									"    pm.test(\"Deposit ID Not Null / undefined \",function(){",
+									"        pm.expect(JSON.parse(responseBody).depositpaid).to.not.be.equal(null);",
+									"        pm.expect(JSON.parse(responseBody).depositpaid).to.not.be.equal(undefined);",
+									"    });",
+									"",
+									"    pm.test(\"Deposit ID - Correct DataType\",function(){",
+									"        console.log(typeof JSON.parse(responseBody).depositpaid);",
+									"        pm.expect(typeof JSON.parse(responseBody).depositpaid).to.be.equal(\"boolean\") ;",
+									"    });",
+									"",
+									"    pm.test(\"Deposit ID - As Expected\", function() {",
+									"    const responseDepositPaid = JSON.parse(responseBody).depositpaid;",
+									"    const expectedDepositPaid = pm.collectionVariables.get(\"Requestdepositpaid\");",
+									"",
+									"    pm.expect(responseDepositPaid).to.be.equal(JSON.parse(expectedDepositPaid)); // Parse expected value",
+									"    });",
+									"",
+									"",
+									"    pm.test(\"Bookingdates Property Returned Correctly\",function(){",
+									"        pm.expect(JSON.parse(responseBody)).to.have.property(\"bookingdates\")",
+									"    });",
+									"",
+									"    pm.test(\"CheckIn , Checkout Properties Returned Correctly\",function(){",
+									"        pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkin\")",
+									"        pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkout\")",
+									"    });",
+									"",
+									"    pm.test(\"Bookingdates Not Null/Undefined \",function(){",
+									"        pm.expect(JSON.parse(responseBody).bookingdates).to.not.be.equal(null);",
+									"        pm.expect(JSON.parse(responseBody).bookingdates).to.not.be.equal(undefined);",
+									"    });",
+									"",
+									"    pm.test(\"Bookingdates - Correct DataType\",function(){",
+									"        console.log(typeof JSON.parse(responseBody).bookingdates);",
+									"        pm.expect(typeof JSON.parse(responseBody).bookingdates).to.be.equal(\"object\") ;",
+									"    });",
+									"    ",
+									"    pm.test(\"Verify that CheckIn/CheckOut return the correct property\", function() {",
+									"    ",
+									"",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkin\")",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkout\")",
+									"    });",
+									"",
+									"    pm.test(\"CheckIn/CheckOut Not Null / Undefined \",function(){",
+									"    pm.expect(JSON.parse(responseBody).bookingdates.checkin).to.not.be.equal(null);",
+									"    pm.expect(JSON.parse(responseBody).bookingdates.checkout).to.not.be.equal(undefined);",
+									"    });",
+									"",
+									"    pm.test(\"CheckIn/CheckOut - Correct DataType\",function(){",
+									"    pm.expect(typeof JSON.parse(responseBody).bookingdates.checkin).to.be.equal(\"string\")",
+									"    pm.expect(typeof JSON.parse(responseBody).bookingdates.checkout).to.be.equal(\"string\")",
+									"    });",
+									"",
+									"    pm.test(\"Verify that CheckIn/CheckOut return the correct value\", function() {",
+									"    ",
+									"    console.log(JSON.parse(responseBody).bookingdates.checkin);",
+									"    console.log(JSON.parse(responseBody).bookingdates.checkout);",
+									"",
+									"        pm.expect(pm.collectionVariables.get(\"Requestcheckin\") ).to.be.equal(JSON.parse(responseBody).bookingdates.checkin) ;",
+									"        pm.expect(pm.collectionVariables.get(\"Requestcheckout\")).to.be.equal(JSON.parse(responseBody).bookingdates.checkout) ;",
+									"    });",
+									"",
+									"",
+									"    pm.test(\"Additional Needs Returned Correctly\",function(){",
+									"        pm.expect(JSON.parse(responseBody)).to.have.property(\"additionalneeds\")",
+									"",
+									"    });",
+									"",
+									"    pm.test(\"Additional Needs Not Null \",function(){",
+									"        console.log(JSON.parse(responseBody).bookingdates.additionalneeds);",
+									"        pm.expect(JSON.parse(responseBody).additionalneeds).to.not.be.equal(null);",
+									"        pm.expect(JSON.parse(responseBody).additionalneeds).to.not.be.equal(undefined);",
+									"",
+									"    });",
+									"",
+									"    pm.test(\"Additional Needs - Correct DataType\",function(){",
+									"        pm.expect(typeof JSON.parse(responseBody).additionalneeds).to.be.equal(\"string\")",
+									"    });",
+									"",
+									"    pm.test(\"Additional Needs - As Expected\", function() {",
+									"",
+									"    console.log(JSON.parse(responseBody).additionalneeds);",
+									"",
+									"        pm.expect( pm.collectionVariables.get(\"RequestAdditionalNeeds\")).to.be.equal(JSON.parse(responseBody).additionalneeds) ;",
+									"    });",
+									"",
+									"// Try to get the created booking ",
+									"var bookingId = pm.collectionVariables.get(\"BookingID\");",
+									"var baseurl = pm.environment.get(\"BaseURL\");",
+									"const url = `${baseurl}/booking/${bookingId}`; ",
+									"pm.sendRequest(url);",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"{{Requestfirstname}}\",\r\n    \"lastname\" : \"{{Requestlastname}}\",\r\n    \"totalprice\" : {{Requesttotalprice}},\r\n    \"depositpaid\" : {{Requestdepositpaid}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{Requestcheckin}}\",\r\n        \"checkout\" : \"{{Requestcheckout}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{RequestAdditionalNeeds}}\"\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/booking/{{BookingID}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"booking",
+								"{{BookingID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateBooking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									" pm.test(\" Check that the status return 200 \", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"   });\r",
+									"\r",
+									"pm.test(\"FirstName Returned Correctly\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"firstname\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"FirstName Not Null / Notdefined \",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).firstname).to.not.be.equal(null);\r",
+									"    pm.expect(JSON.parse(responseBody).firstname).to.not.be.equal(undefined);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"FirstName - Correct DataType\",function(){\r",
+									"    \r",
+									"    pm.expect(typeof JSON.parse(responseBody).firstname).to.be.equal(\"string\") \r",
+									"});\r",
+									" console.log(typeof JSON.parse(responseBody).firstname);\r",
+									"\r",
+									"pm.test(\"Verify that firstname return the correct value \",function(){\r",
+									"   console.log(JSON.parse(responseBody).firstname);\r",
+									"     pm.expect(JSON.parse(request.data).firstname).to.be.equal( JSON.parse(responseBody).firstname) ;\r",
+									"});\r",
+									"\r",
+									" \r",
+									"pm.test(\"LastName Property Returned Correctly\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"lastname\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"LastName Not Null/undefined \",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).lastname).to.not.be.equal(null);\r",
+									"    pm.expect(JSON.parse(responseBody).lastname).to.not.be.equal(undefined);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"LastName - Correct DataType\",function(){\r",
+									"     console.log(typeof JSON.parse(responseBody).lastname);\r",
+									"    pm.expect(typeof JSON.parse(responseBody).lastname).to.be.equal(\"string\") ;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify that lastname return the correct value\",function()\r",
+									"{\r",
+									"    console.log(JSON.parse(responseBody).lastname);\r",
+									"    pm.expect( JSON.parse(request.data).lastname).to.be.equal(JSON.parse(responseBody).lastname) ;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"Total Price Property Returned Correctly\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"totalprice\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Total Price Not Null / undefined \",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).totalprice).to.not.be.equal(null);\r",
+									"    pm.expect(JSON.parse(responseBody).totalprice).to.not.be.equal(undefined);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Total Price - Correct DataType\",function(){\r",
+									"     console.log(typeof JSON.parse(responseBody).totalprice);\r",
+									"    pm.expect(typeof JSON.parse(responseBody).totalprice).to.be.equal(\"number\") ;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify that totalprice return the correct value\",function()\r",
+									"{\r",
+									"    console.log(JSON.parse(responseBody).totalprice);\r",
+									"    pm.expect( JSON.parse(request.data).totalprice).to.be.equal(JSON.parse(responseBody).totalprice) ;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"Deposit ID Returned Correctly\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"depositpaid\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Deposit ID Not Null \",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).depositpaid).to.not.be.equal(null);\r",
+									"    pm.expect(JSON.parse(responseBody).depositpaid).to.not.be.equal(undefined);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Deposit ID - Correct DataType\",function(){\r",
+									"     console.log(typeof JSON.parse(responseBody).depositpaid);\r",
+									"    pm.expect(typeof JSON.parse(responseBody).depositpaid).to.be.equal(\"boolean\") ;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Deposit ID - As Expected\",function()\r",
+									"{\r",
+									"    console.log(JSON.parse(responseBody).depositpaid);\r",
+									"    pm.expect( JSON.parse(request.data).depositpaid).to.be.equal(JSON.parse(responseBody).depositpaid) ;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Bookingdates Property Returned Correctly\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"bookingdates\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"CheckIn , Checkout Properties Returned Correctly\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkin\")\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkout\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Bookingdates Not Null/Undefined \",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.not.be.equal(null);\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.not.be.equal(undefined);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Bookingdates - Correct DataType\",function(){\r",
+									"     console.log(typeof JSON.parse(responseBody).bookingdates);\r",
+									"    pm.expect(typeof JSON.parse(responseBody).bookingdates).to.be.equal(\"object\") ;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Verify that CheckIn/CheckOut return the correct property\", function() {\r",
+									" \r",
+									"   pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkin\")\r",
+									"   pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkout\")\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"CheckIn/CheckOut Not Null / Undefined \",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates.checkin).to.not.be.equal(null);\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates.checkout).to.not.be.equal(undefined);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"CheckIn/CheckOut - Correct DataType\",function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).bookingdates.checkin).to.be.equal(\"string\")\r",
+									"    pm.expect(typeof JSON.parse(responseBody).bookingdates.checkout).to.be.equal(\"string\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify that CheckIn/CheckOut return the correct value\", function() {\r",
+									"\r",
+									"  console.log(JSON.parse(responseBody).bookingdates.checkin);\r",
+									"  console.log(JSON.parse(responseBody).bookingdates.checkout);\r",
+									"\r",
+									"    pm.expect( JSON.parse(request.data).bookingdates.checkin).to.be.equal(JSON.parse(responseBody).bookingdates.checkin) ;\r",
+									"    pm.expect( JSON.parse(request.data).bookingdates.checkout).to.be.equal(JSON.parse(responseBody).bookingdates.checkout) ;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"Additional Needs Returned Correctly\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"additionalneeds\")\r",
+									"\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Additional Needs Not Null / undefined \",function(){\r",
+									"      console.log(JSON.parse(responseBody).bookingdates.additionalneeds);\r",
+									"    pm.expect(JSON.parse(responseBody).additionalneeds).to.not.be.equal(null);\r",
+									"    pm.expect(JSON.parse(responseBody).additionalneeds).to.not.be.equal(undefined);\r",
+									"\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Additional Needs - Correct DataType\",function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).additionalneeds).to.be.equal(\"string\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Additional Needs - As Expected\", function() {\r",
+									"\r",
+									"  console.log(JSON.parse(responseBody).additionalneeds);\r",
+									"\r",
+									"    pm.expect(JSON.parse(request.data).additionalneeds).to.be.equal(JSON.parse(responseBody).additionalneeds) ;\r",
+									"\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// Try to get the updated booking \r",
+									"var bookingId = pm.collectionVariables.get(\"BookingID\");\r",
+									"var baseurl = pm.environment.get(\"BaseURL\");\r",
+									"const url = `${baseurl}/booking/${bookingId}`; \r",
+									"pm.sendRequest(url);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "token={{AccessToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46cGFzc3dvcmQxMjM=",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"{{$randomFirstName}}\",\r\n    \"lastname\" : \"{{$randomLastName}}\",\r\n    \"totalprice\" : \"{{Requesttotalprice}}\",\r\n    \"depositpaid\" : \"{{Requestdepositpaid}}\",\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{Requestcheckin}}\",\r\n        \"checkout\" : \"{{Requestcheckout}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{RequestAdditionalNeeds}}\"\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/booking/{{BookingID}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"booking",
+								"{{BookingID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteBooking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\" Check that the status return 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"   });\r",
+									"\r",
+									"pm.test(\"Check that response body return Created \",function(){\r",
+									"    pm.expect(responseBody).to.be.equal('Created')\r",
+									"});\r",
+									"\r",
+									"// Try to get the deleted booking \r",
+									"var bookingId = pm.collectionVariables.get(\"BookingID\");\r",
+									"var baseurl = pm.environment.get(\"BaseURL\");\r",
+									"const url = `${baseurl}/booking/${bookingId}`; \r",
+									"pm.sendRequest(url);\r",
+									" \r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "token={{AccessToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic YWRtaW46cGFzc3dvcmQxMjM=",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/booking/{{BookingID}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"booking",
+								"{{BookingID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ping",
+			"item": [
+				{
+					"name": "Ping - HealthCheck",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code should be 201 OK\", function () {\r",
+									"pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/ping",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"ping"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Requestfirstname",
+			"value": ""
+		},
+		{
+			"key": "Requestlastname",
+			"value": ""
+		},
+		{
+			"key": "Requesttotalprice",
+			"value": ""
+		},
+		{
+			"key": "Requestdepositpaid",
+			"value": ""
+		},
+		{
+			"key": "Requestcheckin",
+			"value": ""
+		},
+		{
+			"key": "Requestcheckout",
+			"value": ""
+		},
+		{
+			"key": "RequestAdditionalNeeds",
+			"value": ""
+		},
+		{
+			"key": "BookingID",
+			"value": "{{Bookingid}}"
+		},
+		{
+			"key": "AccessToken",
+			"value": "{{Token}}",
+			"type": "string"
+		},
+		{
+			"key": "Username",
+			"value": "admin",
+			"type": "string"
+		},
+		{
+			"key": "Password",
+			"value": "password123",
+			"type": "string"
+		},
+		{
+			"key": "RequestPrice",
+			"value": ""
+		},
+		{
+			"key": "randomBoolean",
+			"value": ""
+		},
+		{
+			"key": "RandomOption",
+			"value": ""
+		}
+	]
+}
